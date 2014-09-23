@@ -6,5 +6,9 @@ public interface DomainEvent {
 
     public int eventVersion();
     
+    /**
+     * イベント発生時間
+     * @return
+     */
     public Date occurredOn();
 }
