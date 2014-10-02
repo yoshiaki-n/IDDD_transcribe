@@ -7,6 +7,7 @@ import org.springframework.dao.CleanupFailureDataAccessException;
 
 import com.natswell.sample.ddd.common.event.EventStore;
 import com.natswell.sample.ddd.common.persistence.CleanableStore;
+import com.natswell.sample.ddd.identityaccess.domain.model.DomainRegistry;
 import com.natswell.sample.ddd.identityaccess.domain.model.access.Role;
 import com.natswell.sample.ddd.identityaccess.domain.model.identity.ContactInformation;
 import com.natswell.sample.ddd.identityaccess.domain.model.identity.EmailAddress;

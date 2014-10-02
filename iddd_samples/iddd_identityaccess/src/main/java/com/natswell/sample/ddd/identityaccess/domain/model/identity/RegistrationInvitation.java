@@ -27,10 +27,19 @@ public class RegistrationInvitation extends ConcurrencySafeEntity {
         return this.invitationId;
     }
     
-//    public boolean isAvailable() {
-//        
-//    }
-//    
+    public boolean isAvailable() {
+        boolean isAvailable = false;
+        if (this.startingOn() == null && this.until() == null) {
+            isAvailable = true;
+        } else {
+            long time = (new Date()).getTime();
+            if (time >= this.startingOn().getTime() && time <= this.until().getTime()) {
+                isAvailable = true;
+            }
+        }
+        return isAvailable;
+    }
+    
 //    public boolean isIdentifiedBy(String anInvitationIdentifier) {
 //        
 //    }

@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.natswell.sample.ddd.identityaccess.domain.model.identity.TenantProvisioningService;
 import com.natswell.sample.ddd.identityaccess.domain.model.identity.UserRepository;
 
 public class DomainRegistry implements ApplicationContextAware {
@@ -31,9 +32,10 @@ public class DomainRegistry implements ApplicationContextAware {
 //    public static RoleRepository roleRepository() {
 //    }
 //
-//    public static TenantProvisioningService tenantProvisioningService() {
-//    }
-//
+    public static TenantProvisioningService tenantProvisioningService() {
+        return (TenantProvisioningService) applicationContext.getBean("tenantProvisioningService");
+    }
+
 //    public static TenantRepository tenantRepository() {
 //    }
 

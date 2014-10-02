@@ -25,10 +25,15 @@ public class Tenant extends ConcurrencySafeEntity {
     private Set<RegistrationInvitation> registrationInvitations;
     private TenantId tenantId;
     
-//    public Tenant(TenantId aTenantId, String aName, String aDescription, boolean anActive) {
-//        this();
-//    }
-//    
+    public Tenant(TenantId aTenantId, String aName, String aDescription, boolean anActive) {
+        this();
+        
+        this.setActive(anActive);
+        this.setDescription(aDescription);
+        this.setName(aName);
+        this.setTenantId(aTenantId);
+    }
+    
 //    public void activate() {
 //        
 //    }
@@ -54,7 +59,11 @@ public class Tenant extends ConcurrencySafeEntity {
     }
     
     public boolean isRegistrationAvailableThrough(String anInvitationIdentifier) {
-        return false;
+        this.assertStateTrue(this.isActive(), "Tenant is not active.");
+        
+        RegistrationInvitation invitation =
+                this.invitation(anInvitationIdentifier);
+        return invitation == null ? false : invitation.isAvailable();
     }
     
 //    public String name() {
@@ -112,16 +121,33 @@ public class Tenant extends ConcurrencySafeEntity {
 //    public RegistrationInvitation redefineRegistrationInvirationAs(String anInvitationIdentifier) {
 //        return null;
 //    }
-//    
-//    public User registerUser(
-//            String anIvitationIdentifier,
-//            String aUsername,
-//            String aPassword,
-//            Enablement anEnablement,
-//            Person aPerson) {
-//        return null;
-//    }
-//    
+    
+    public User registerUser(
+            String anIvitationIdentifier,
+            String aUsername,
+            String aPassword,
+            Enablement anEnablement,
+            Person aPerson) {
+        this.assertStateTrue(this.isActive(), "Tenant is not active.");
+        
+        User user = null;
+        
+        if (this.isRegistrationAvailableThrough(anIvitationIdentifier)) {
+            // ensure same tenant
+            aPerson.setTenantId(this.tenantId());
+            
+            user = new User(
+                    this.tenantId(),
+                    aUsername,
+                    aPassword,
+                    anEnablement,
+                    aPerson);
+            
+        }
+        
+        return user;
+    }
+    
     public TenantId tenantId() {
         return this.tenantId;
     }
@@ -147,41 +173,53 @@ public class Tenant extends ConcurrencySafeEntity {
 //        // TODO Auto-generated method stub
 //        return super.toString();
 //    }
-//    
-//    protected Tenant() {
-//        super();
-//        
-//        this.setRegistrationInvitations(new HashSet<RegistrationInvitation>(0));
-//    }
-//    
-//    protected void setActive(boolean anActive) {
-//        this.active = anActive;
-//    }
-//    
+    
+    protected Tenant() {
+        super();
+        
+        this.setRegistrationInvitations(new HashSet<RegistrationInvitation>(0));
+    }
+    
+    protected void setActive(boolean anActive) {
+        this.active = anActive;
+    }
+    
 //    protected Collection<InvitationDescriptor> allRegistrationInvitationsFor(boolean isAvailable) {
 //        return null;
 //    }
-//    
-//    protected void setDescription(String aDescription) {
-//        
-//    }
-//    
-//    protected RegistrationInvitation invitation(String anInvitationIdentifier) {
-//        return null;
-//    }
-//    
-//    protected void setName(String aName) {
-//    }
+    
+    protected void setDescription(String aDescription) {
+        this.assertArgumentNotEmpty(aDescription, "The tenant description is required.");
+        this.assertArgumentLength(aDescription, 1, 100, "The tenant description must be 100 character or less.");
+        
+        this.description = aDescription;
+    }
+    
+    protected RegistrationInvitation invitation(String anInvitationIdentifier) {
+        for (RegistrationInvitation invitation : this.registrationInvitations()) {
+            return invitation;
+        }
+        return null;
+    }
+    
+    protected void setName(String aName) {
+        this.assertArgumentNotEmpty(aName, "The tenant name is required.");
+        this.assertArgumentLength(aName, 1, 100, "The name must be 100 characters or less.");
+        
+        this.name = aName;
+    }
     
     protected Set<RegistrationInvitation> registrationInvitations() {
         return this.registrationInvitations;
     }
     
-//    protected void setRegistrationInvitations(Set<RegistrationInvitation> aRegistrationInvitations) {
-//        
-//    }
-//    
-//    protected void setTenantId(TenantId aTenantId) {
-//        
-//    }
+    protected void setRegistrationInvitations(Set<RegistrationInvitation> aRegistrationInvitations) {
+        this.registrationInvitations = aRegistrationInvitations;
+    }
+    
+    protected void setTenantId(TenantId aTenantId) {
+        this.assertArgumentNotNull(aTenantId, "TenantId is required.");
+        
+        this.tenantId = aTenantId;
+    }
 }
